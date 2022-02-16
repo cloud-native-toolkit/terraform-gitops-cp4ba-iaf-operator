@@ -1,0 +1,122 @@
+name: Verify and release module
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  verify:
+    if: ${{ !contains( github.event.pull_request.labels.*.name, 'skip ci' ) }}
+    runs-on: ubuntu-latest
+    container: quay.io/ibmgaragecloud/cli-tools:v0.15
+
+    strategy:
+      matrix:
+        testcase:
+          #comment-out or remove either of the platforms you do not need.  ocp4_latest is IBM Cloud
+          - ocp4_latest_gitops
+          - aws_latest_gitops
+      #      max-parallel: 1
+      fail-fast: false
+
+    env:
+      HOME: /home/devops
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - id: variables
+        name: Set up variables
+        env:
+          GIT_ORG: ${{ secrets.GIT_ORG }}
+          AWS_CLUSTER_USERNAME: ${{ secrets.AWS_CLUSTER_USERNAME }}
+          AWS_CLUSTER_PASSWORD: ${{ secrets.AWS_CLUSTER_PASSWORD }}
+          IBM_CLUSTER_USERNAME: "apikey"
+          IBM_CLUSTER_PASSWORD: ${{ secrets.IBMCLOUD_API_KEY }}
+          ENVIRONMENT: ${{ matrix.testcase }}
+        shell: bash
+        run: |
+          repo=$(echo ${GITHUB_REPOSITORY} | sed -E "s~.*/[^-]+-(.*)~\1~g")
+          echo "Repo: $repo"
+          echo "::set-output name=repo::$repo"
+
+          org="${GIT_ORG:-cloud-native-toolkit-test}"
+          echo "Org: $org"
+          echo "::set-output name=org::$org"
+
+          if [[ $ENVIRONMENT =~ ^aws ]]; then
+            echo "::set-output name=CLUSTER_USERNAME::$AWS_CLUSTER_USERNAME"
+            echo "::set-output name=CLUSTER_PASSWORD::$AWS_CLUSTER_PASSWORD"
+          else 
+            echo "::set-output name=CLUSTER_USERNAME::$IBM_CLUSTER_USERNAME"
+            echo "::set-output name=CLUSTER_PASSWORD::$IBM_CLUSTER_PASSWORD"
+          fi
+
+      - name: Verify deploy on ${{ matrix.testcase }}
+        uses: cloud-native-toolkit/action-module-verify-deploy@main
+        with:
+          clusterId: ${{ matrix.testcase }}
+          validateDeployScript: .github/scripts/validate-deploy.sh
+        env:
+          TF_VAR_git_username: ${{ secrets.GIT_ADMIN_USERNAME }}
+          TF_VAR_git_token: ${{ secrets.GIT_ADMIN_TOKEN }}
+          TF_VAR_git_org: ${{ steps.variables.outputs.org }}
+          TF_VAR_git_repo: ${{ steps.variables.outputs.repo }}
+          TF_VAR_bootstrap_prefix: ${{ steps.variables.outputs.repo }}
+          TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
+          TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
+          TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
+
+      - name: Verify destroy on ${{ matrix.testcase }}
+        uses: cloud-native-toolkit/action-module-verify-destroy@main
+        if: ${{ always() }}
+        with:
+          clusterId: ${{ matrix.testcase }}
+        env:
+          TF_VAR_git_username: ${{ secrets.GIT_ADMIN_USERNAME }}
+          TF_VAR_git_token: ${{ secrets.GIT_ADMIN_TOKEN }}
+          TF_VAR_git_org: ${{ steps.variables.outputs.org }}
+          TF_VAR_git_repo: ${{ steps.variables.outputs.repo }}
+          TF_VAR_bootstrap_prefix: ${{ steps.variables.outputs.repo }}
+          TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
+          TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
+          TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
+
+  verifyMetadata:
+    runs-on: ubuntu-latest
+
+    env:
+      DIST_DIR: ./dist
+      PUBLISH_BRANCH: gh-pages
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: cloud-native-toolkit/action-module-metadata-create@v1
+        with:
+          strict: true
+          validate: true
+
+  release:
+    needs: [verify, verifyMetadata]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Drafts your next Release notes as Pull Requests are merged into "main"
+      - uses: release-drafter/release-drafter@v5
+        with:
+          # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
+          config-name: release-drafter.yaml
+          publish: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
