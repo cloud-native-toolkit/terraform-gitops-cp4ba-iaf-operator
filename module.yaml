@@ -1,8 +1,8 @@
-name: ibm-iaf-operator
+name: gitops-cp4ba-operator
 type: gitops
 description: >-
   Module to populate a gitops repo with the resources to provision
-  cp-ban-operator
+  cp4ba-operator
 tags:
   - tools
   - gitops
@@ -41,4 +41,3 @@ versions:
         moduleRef:
           id: gitops
           output: sealed_secrets_cert
-softwareProvider: ibm-cp
