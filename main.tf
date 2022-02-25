@@ -9,7 +9,6 @@ locals {
       subscriptions = {
         ibmcp4a = {
           name = "ibm-automation"
-          namespace = var.namespace
           subscription = {
             #channel             = var.channel
             channel             = "v1.3"
@@ -24,7 +23,7 @@ locals {
       }
     }   
    }
-  layer = "services"  
+  layer = "services"
   type  = "base"
   application_branch = "main" 
   namespace = var.namespace
@@ -80,3 +79,4 @@ resource null_resource setup_gitops {
     }
   }
 }
+  
