@@ -65,7 +65,7 @@ variable "git_credentials" {
 
 variable "namespace" {
   type        = string
-  //default = "cp4ba"
+  default = "cp4ba"
   description = "The namespace where the application should be deployed"
 }
 
