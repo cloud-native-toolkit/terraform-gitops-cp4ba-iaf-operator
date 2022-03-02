@@ -15,8 +15,8 @@ echo ">>>>>>>> ${DEST_DIR} ${NAMESPACE} ${NAME}"
 #parameters: $(echo "${PARMS}" | jq -c 'from_entries')
 #EOL
 #fi 
-cp -R "${CHART_DIR}"/* "${DEST_DIR}"
+cp -R "${CHART_DIR}"/* "${DEST_DIR}"  
 
 #if [[ -n "${VALUES_CONTENT}" ]]; then
-#  echo "${VALUES_CONTENT}" > "${DEST_DIR}/iaf-operator.yaml" 
+#  echo "${VALUES_CONTENT}" > "${DEST_DIR}/iaf-operator.yaml"   
 #fi 
