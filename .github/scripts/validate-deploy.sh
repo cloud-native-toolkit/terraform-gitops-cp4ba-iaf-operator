@@ -73,7 +73,7 @@ if [[ $count -eq 20 ]]; then
   exit 1
 fi
 
-kubectl get subscription "${SUBSNAME}" -n "${NAMESPACE}" || exit 1
+kubectl get subscription "${SUBSNAME}" -n "${NAMESPACE}" || exit 1   
 
 cd ..
 rm -rf .testrepo 
