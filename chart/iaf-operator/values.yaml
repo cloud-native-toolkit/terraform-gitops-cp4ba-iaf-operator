@@ -1,0 +1,18 @@
+# Default values for ibm-automation-foundation-core-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+subscriptions:
+  ibmautomation:
+    #name: ibm-automation-foundation-core
+    name: ibm-automation
+    namespace: gitops-cp4ba-operator
+    subscription:
+      channel: v1.3
+      installPlanApproval: Automatic
+      #name: ibm-automation-foundation-core
+      name: ibm-automation
+      source: ibm-operator-catalog
+      #source: iaf-core-operators
+      sourceNamespace: openshift-marketplace
+####Namespace needs to be added  
