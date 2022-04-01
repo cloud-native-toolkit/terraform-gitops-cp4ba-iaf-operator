@@ -1,8 +1,7 @@
-name: iaf-operator
+name: cp4ba-iaf-operator
 type: gitops
 description: >-
-  Module to populate a gitops repo with the resources to provision
-  cp4ba-operator
+  Module for gitops deployment of the CP4BA IBM Automation Foundation Operator.
 tags:
   - tools
   - gitops
