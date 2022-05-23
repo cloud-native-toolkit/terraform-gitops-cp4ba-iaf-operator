@@ -72,6 +72,12 @@ if [[ $count -eq 20 ]]; then
   kubectl get all -n "${NAMESPACE}"
   exit 1
 fi
+#### Temporary sleep to validate deployment manually
+count=0
+echo "Sleeping for 5 minutes after finding the subscription to manually verify"
+sleep 600
+
+
 
 kubectl get subscription "${SUBSNAME}" -n "${NAMESPACE}" || exit 1   
 
