@@ -77,3 +77,4 @@ kubectl get subscription "${SUBSNAME}" -n "${NAMESPACE}" || exit 1
 
 cd ..
 rm -rf .testrepo 
+
