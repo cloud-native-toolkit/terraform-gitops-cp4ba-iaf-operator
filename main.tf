@@ -9,6 +9,7 @@ locals {
       subscriptions = {
         ibmcp4a = {
           name = "ibm-automation"
+          namespace = "var.namespace"
           subscription = {
             #channel             = var.channel
             channel             = "v1.3"
@@ -79,4 +80,8 @@ resource null_resource setup_gitops {
     }
   }
 }
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 5874bfc556bb4089d47d2d498c5b39f8bbcd8c0d
   
