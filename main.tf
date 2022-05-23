@@ -9,7 +9,7 @@ locals {
       subscriptions = {
         ibmcp4a = {
           name = "ibm-automation"
-          namespace = "var.namespace"
+          namespace = var.namespace
           subscription = {
             #channel             = var.channel
             channel             = "v1.3"
