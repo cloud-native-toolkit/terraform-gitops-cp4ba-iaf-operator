@@ -80,8 +80,3 @@ resource null_resource setup_gitops {
     }
   }
 }
-<<<<<<< HEAD
-=======
-  
->>>>>>> 5874bfc556bb4089d47d2d498c5b39f8bbcd8c0d
-  
