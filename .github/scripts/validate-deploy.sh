@@ -25,7 +25,7 @@ echo "NOW TRYING TO CLONE TO THE TEST REPO"
 git clone https://${GIT_TOKEN}@${GIT_REPO} .testrepo
 
 cd .testrepo || exit 1
-
+  
 find . -name "*"
 ### CHeck for the yaml files are copied to the repo
 if [[ ! -f "argocd/${LAYER}/cluster/${SERVER_NAME}/${TYPE}/${NAMESPACE}-${COMPONENT_NAME}.yaml" ]]; then
