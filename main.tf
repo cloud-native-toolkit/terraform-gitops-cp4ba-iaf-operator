@@ -5,11 +5,11 @@ locals {
   service_url   = "http://${local.name}.${var.namespace}"
   chart_dir = "${path.module}/chart/iaf-operator"
   values_content = {
-    "ibm-iaf-operator" = {
-      subscriptions = {
-        ibmcp4a = {
-          name = "ibm-automation"
-          subscription = {
+    subscriptions = {
+       ibmautomation = {
+         name = "ibm-automation"
+         namespace = var.namespace
+         subscription = {
             #channel             = var.channel
             channel             = "v1.3"
             installPlanApproval = "Automatic"
@@ -22,7 +22,7 @@ locals {
         }
       }
     }   
-   }
+   
   layer = "services"
   type  = "base"
   application_branch = "main" 
@@ -79,4 +79,3 @@ resource null_resource setup_gitops {
     }
   }
 }
-  

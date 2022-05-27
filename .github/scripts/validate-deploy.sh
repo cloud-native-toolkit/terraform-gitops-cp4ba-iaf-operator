@@ -25,7 +25,7 @@ echo "NOW TRYING TO CLONE TO THE TEST REPO"
 git clone https://${GIT_TOKEN}@${GIT_REPO} .testrepo
 
 cd .testrepo || exit 1
-
+  
 find . -name "*"
 ### CHeck for the yaml files are copied to the repo
 if [[ ! -f "argocd/${LAYER}/cluster/${SERVER_NAME}/${TYPE}/${NAMESPACE}-${COMPONENT_NAME}.yaml" ]]; then
@@ -72,8 +72,15 @@ if [[ $count -eq 20 ]]; then
   kubectl get all -n "${NAMESPACE}"
   exit 1
 fi
+#### Temporary sleep to validate deployment manually
+count=0
+echo "Sleeping for 5 minutes after finding the subscription to manually verify"
+sleep 600
+
+
 
 kubectl get subscription "${SUBSNAME}" -n "${NAMESPACE}" || exit 1   
 
 cd ..
 rm -rf .testrepo 
+

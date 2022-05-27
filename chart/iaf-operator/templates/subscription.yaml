@@ -5,5 +5,5 @@ metadata:
   namespace: {{ .Values.subscriptions.ibmautomation.namespace }}
   annotations:
 spec:
-  {{- toYaml .Values.subscriptions.ibmautomation.subscription | nindent 2 }}
 
+  {{- toYaml .Values.subscriptions.ibmautomation.subscription | nindent 2 }}
